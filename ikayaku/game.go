@@ -22,40 +22,15 @@ const (
 )
 
 var background *ebiten.Image
-var ika1 *ebiten.Image
-var ika2 *ebiten.Image
-var ika3 *ebiten.Image
-var ika4 *ebiten.Image
 var mplusNormalFont font.Face
 var score *Score
 var timer *Timer
-var x float64
-var y float64
+var ikas []*Ika
 
 func init() {
 	var err error
 
 	background, _, err = ebitenutil.NewImageFromFile("assets/images/shitirin.jpg")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	ika1, _, err = ebitenutil.NewImageFromFile("assets/images/ika_1.png")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	ika2, _, err = ebitenutil.NewImageFromFile("assets/images/ika_2.png")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	ika3, _, err = ebitenutil.NewImageFromFile("assets/images/ika_3.png")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	ika4, _, err = ebitenutil.NewImageFromFile("assets/images/ika_4.gif")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -95,9 +70,10 @@ func (g *Game) Update() error {
 			timer.SubTime(1)
 		}
 
+		ikas = IkasUpdate(ikas)
+
 		if rand.Intn(9) < 5 {
-			x = float64(rand.Intn(ScreenWidth - IkaSize))
-			y = float64(rand.Intn(ScreenHeight - IkaSize))
+			ikas = append(ikas, NewIka(float64(rand.Intn(ScreenWidth-IkaSize)), float64(rand.Intn(ScreenHeight-IkaSize))))
 		}
 	}
 	g.counter++
@@ -110,9 +86,11 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 
 func (g *Game) Draw(screen *ebiten.Image) {
 	screen.DrawImage(background, nil)
-	op := &ebiten.DrawImageOptions{}
-	op.GeoM.Translate(x, y)
-	screen.DrawImage(ika1, op)
+	for _, ika := range ikas {
+		op := &ebiten.DrawImageOptions{}
+		op.GeoM.Translate(ika.x, ika.y)
+		screen.DrawImage(ika.image, op)
+	}
 
 	scoreMsg := fmt.Sprintf("Score: %d", score.GetScore())
 	text.Draw(screen, scoreMsg, mplusNormalFont, 10, 30, color.White)
