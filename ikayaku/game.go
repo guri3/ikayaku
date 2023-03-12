@@ -65,7 +65,7 @@ func NewGame() *Game {
 }
 
 func (g *Game) Update() error {
-	if g.counter%ebiten.TPS() == 0 {
+	if timer.GetTime() != 0 && g.counter%ebiten.TPS() == 0 {
 		if timer.GetTime() != 0 {
 			timer.SubTime(1)
 		}
