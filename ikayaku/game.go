@@ -65,6 +65,11 @@ func NewGame() *Game {
 }
 
 func (g *Game) Update() error {
+	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+		x, y := ebiten.CursorPosition()
+		ikas = IkasClick(ikas, x, y)
+	}
+
 	if timer.GetTime() != 0 && g.counter%ebiten.TPS() == 0 {
 		if timer.GetTime() != 0 {
 			timer.SubTime(1)
@@ -73,7 +78,7 @@ func (g *Game) Update() error {
 		ikas = IkasUpdate(ikas)
 
 		if rand.Intn(9) < 5 {
-			ikas = append(ikas, NewIka(float64(rand.Intn(ScreenWidth-IkaSize)), float64(rand.Intn(ScreenHeight-IkaSize))))
+			ikas = append(ikas, NewIka(float64(rand.Intn(ScreenWidth-IkaSize)), float64(rand.Intn(ScreenHeight-IkaSize)), score))
 		}
 	}
 	g.counter++

@@ -19,5 +19,8 @@ func (s *Score) AddScore(point int) {
 }
 
 func (s *Score) SubScore(point int) {
+	if s.score <= 0 {
+		return
+	}
 	s.score -= point
 }

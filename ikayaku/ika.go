@@ -37,22 +37,22 @@ type Ika struct {
 	x     float64
 	y     float64
 	image *ebiten.Image
-	count int
+	score *Score
 }
 
-func NewIka(x, y float64) *Ika {
+func NewIka(x, y float64, score *Score) *Ika {
 	return &Ika{
 		x:     x,
 		y:     y,
 		image: ika1Image,
-		count: 0,
+		score: score,
 	}
 }
 
 func IkasUpdate(ikas []*Ika) []*Ika {
 	var newIkas []*Ika
 	for _, ika := range ikas {
-		isUpdated := ika.CheckUpdate()
+		isUpdated := ika.checkUpdate()
 		if isUpdated {
 			newIkas = append(newIkas, ika)
 		}
@@ -60,8 +60,9 @@ func IkasUpdate(ikas []*Ika) []*Ika {
 	return newIkas
 }
 
-func (i *Ika) CheckUpdate() bool {
+func (i *Ika) checkUpdate() bool {
 	if i.image == ika4Image {
+		i.score.SubScore(3)
 		return false
 	}
 
@@ -86,4 +87,32 @@ func (i *Ika) updateToIka3() {
 
 func (i *Ika) updateToIka4() {
 	i.image = ika4Image
+}
+
+func IkasClick(ikas []*Ika, x, y int) []*Ika {
+	var newIkas []*Ika
+	for _, ika := range ikas {
+		if ika.checkClick(x, y) {
+			if ika.image == ika1Image {
+				ika.score.AddScore(1)
+			} else if ika.image == ika2Image {
+				ika.score.AddScore(2)
+			} else if ika.image == ika3Image {
+				ika.score.AddScore(3)
+			} else if ika.image == ika4Image {
+				ika.score.SubScore(1)
+			}
+		} else {
+			newIkas = append(newIkas, ika)
+		}
+	}
+	return newIkas
+}
+
+func (i *Ika) checkClick(x, y int) bool {
+	if x > (int(i.x)+i.image.Bounds().Min.X) && x < (int(i.x)+i.image.Bounds().Max.X) &&
+		y > (int(i.y)+i.image.Bounds().Min.Y) && y < (int(i.y)+i.image.Bounds().Max.Y) {
+		return true
+	}
+	return false
 }
