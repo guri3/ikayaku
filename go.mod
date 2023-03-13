@@ -3,7 +3,6 @@ module github.com/guri3/ikayaku
 go 1.18
 
 require (
-	github.com/hajimehoshi/ebiten v1.12.12
 	github.com/hajimehoshi/ebiten/v2 v2.4.18
 	golang.org/x/image v0.1.0
 )
